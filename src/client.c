@@ -72,13 +72,13 @@ void simulate_remote_call(char *hostnameOrIp, char command[]){
         printf("%s",buffer);
         bzero(buffer,256);
     }
+    close(sockfd);
 }
 
 
 
 int main(int argc, char *argv[])
 {
-    int sockfd; // socket file descriptor
     char *hostnameOrIp;
     char buffer[256];
     int n;
@@ -94,7 +94,6 @@ int main(int argc, char *argv[])
 
     simulate_remote_call(hostnameOrIp, buffer);
 
-    close(sockfd);
     printf("\nDONE!\n\n\n");
     return 0;
 }
