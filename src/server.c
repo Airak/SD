@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     int sockfd, listener;
     struct sockaddr_in client_addr;
     socklen_t client_len;
-    int n;
+    int pid;
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER);
@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
             error("ERROR on accept");
         printf("Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
         
-        n = fork();
-        if(n>0){
+        pid = fork();
+        if(pid>0){
             close(sockfd); // Closes the accepted socket. and resume accepted loop
         } else {
             close(listener); // Closes listener socket

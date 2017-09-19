@@ -10,13 +10,18 @@
 
 #define BUFFER_SIZE 256
 #define PORT_NUMBER 4563
+#define TAIL_LOG_COMMAND "tail -n 30 *.log"
 
+// perfumaria
+#define BOLD "\e[01;39m"
+#define NO_COLOR "\e[00;39m"
 
 void error(const char *msg)
 {
     perror(msg);
     exit(1);
 }
+
 
 int connectSocket(char *hostnameOrIp, int port_number){
     int sockfd; // socket file descriptor
@@ -31,7 +36,6 @@ int connectSocket(char *hostnameOrIp, int port_number){
 
     // resolving host:
     server = gethostbyname(hostnameOrIp);
-    printf("\nHost solved!");
     if (server == NULL)
         error("ERROR, no such host\n");
     bzero((char *) &serv_addr, sizeof(serv_addr)); // cleans serv_addr
@@ -49,6 +53,29 @@ int connectSocket(char *hostnameOrIp, int port_number){
 }
 
 
+void simulate_remote_call(char *hostnameOrIp, char command[]){
+    char buffer[256];
+    
+    // Connecting to server socket:
+    printf("Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+    int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
+    
+    // Sending command to server:
+    int n = write(sockfd,command,strlen(command));
+    if (n < 0)
+         error("ERROR writing to socket");
+
+    // Receiving response:
+    bzero(buffer,256);
+    printf(BOLD"\n\t\t\t---------- host %s logs: ----------\n"NO_COLOR, hostnameOrIp);
+    while (read(sockfd,buffer,255) != 0) {
+        printf("%s",buffer);
+        bzero(buffer,256);
+    }
+}
+
+
+
 int main(int argc, char *argv[])
 {
     int sockfd; // socket file descriptor
@@ -60,26 +87,12 @@ int main(int argc, char *argv[])
         error("Hostname Required!");
     hostnameOrIp = argv[1];
 
-    // Connecting to server socket:
-    printf("Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
-    sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
-
     // receiving command from keyboard:
     printf("Please enter command: ");
     bzero(buffer,256);
     fgets(buffer,255,stdin);
 
-    // Sending command to server:
-    n = write(sockfd,buffer,strlen(buffer));
-    if (n < 0)
-         error("ERROR writing to socket");
-
-    // Receiving response:
-    bzero(buffer,256);
-    while (read(sockfd,buffer,255) != 0) {
-        printf("%s\n",buffer);
-        bzero(buffer,256);
-    }
+    simulate_remote_call(hostnameOrIp, buffer);
 
     close(sockfd);
     printf("\nDONE!\n\n\n");
