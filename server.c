@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+
+#define BUFFER_SIZE 256
+#define PORT_NUMBER 4562
 
 void error(const char *msg)
 {
@@ -12,42 +16,67 @@ void error(const char *msg)
     exit(1);
 }
 
+
+int start_listening(int port){
+    int listener, sockfd; // Socket file descriptors
+    struct sockaddr_in serv_addr;
+    // Opening socket to listen to connection:
+    listener = socket(AF_INET, SOCK_STREAM, 0);
+    if (listener < 0)
+        error("ERROR opening socket");
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(port);
+    if (bind(listener, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+        error("ERROR on binding");
+    listen(listener,5);
+    return listener;
+}
+
+
+
 int main(int argc, char *argv[])
 {
-     int sockfd, newsockfd, portno;
-     socklen_t clilen;
-     char buffer[256];
-     struct sockaddr_in serv_addr, cli_addr;
-     int n;
-     if (argc < 2) {
-         fprintf(stderr,"ERROR, no port provided\n");
-         exit(1);
-     }
-     sockfd = socket(AF_INET, SOCK_STREAM, 0);
-     if (sockfd < 0) 
-        error("ERROR opening socket");
-     bzero((char *) &serv_addr, sizeof(serv_addr));
-     portno = atoi(argv[1]);
-     serv_addr.sin_family = AF_INET;
-     serv_addr.sin_addr.s_addr = INADDR_ANY;
-     serv_addr.sin_port = htons(portno);
-     if (bind(sockfd, (struct sockaddr *) &serv_addr,
-              sizeof(serv_addr)) < 0) 
-              error("ERROR on binding");
-     listen(sockfd,5);
-     clilen = sizeof(cli_addr);
-     newsockfd = accept(sockfd, 
-                 (struct sockaddr *) &cli_addr, 
-                 &clilen);
-     if (newsockfd < 0) 
-          error("ERROR on accept");
-     bzero(buffer,256);
-     n = read(newsockfd,buffer,255);
-     if (n < 0) error("ERROR reading from socket");
-     printf("Here is the message: %s\n",buffer);
-     n = write(newsockfd,"I got your message",18);
-     if (n < 0) error("ERROR writing to socket");
-     close(newsockfd);
-     close(sockfd);
-     return 0; 
+    int sockfd, listener, portno;
+    char buffer[BUFFER_SIZE];
+    struct sockaddr_in client_addr;
+    socklen_t client_len;
+    int n;
+
+    // Just listens to socket:
+    listener = start_listening(PORT_NUMBER);
+
+    while(1){
+
+        // Accepting Connection. Receiving command request:
+        printf("Server's Physical layer listening to port %d...\n", PORT_NUMBER);
+        sockfd = accept(listener, (struct sockaddr *) &client_addr, &client_len);
+        if (sockfd < 0)
+            error("ERROR on accept");
+        printf("Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
+
+        // Reads command from opened socket:
+        bzero(buffer,256);
+        n = read(sockfd,buffer,255);
+        if (n < 0)
+            error("ERROR reading from socket");
+
+        // Prints out requested command:
+        printf("Client request command: %s\n",buffer);
+
+        // Sends command results to client:
+        FILE *arq = popen(buffer, "r");
+        bzero(buffer,256);
+        while (fgets(buffer, sizeof(buffer), arq) != 0) {
+            write(sockfd,buffer,strlen(buffer));
+        }
+
+        // Clears environment:
+        bzero(buffer,256);
+        printf("Command response successfully sent.\n");
+        pclose(arq);
+        close(sockfd);
+    }
+    return 0;
 }
