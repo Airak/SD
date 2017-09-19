@@ -10,7 +10,7 @@
 
 #define BUFFER_SIZE 256
 #define PORT_NUMBER 4563
-#define TAIL_LOG_COMMAND "tail -n 30 *.log"
+#define TAIL_LOG_COMMAND "cd log && tail -n 30 *.log"
 
 // perfumaria
 #define BOLD "\e[01;39m"
@@ -72,28 +72,36 @@ void simulate_remote_call(char *hostnameOrIp, char command[]){
         printf("%s",buffer);
         bzero(buffer,256);
     }
+    printf("\n");
     close(sockfd);
 }
 
 
+void request_from_peers(char *command){
+    FILE * fp;
+    char *line;
+    size_t len;
+    ssize_t read;
+
+    fp = fopen("peers.txt", "r");
+    if (fp == NULL)
+        error("ERRO ao abrir arquivo de pares");
+
+    line = malloc(256);
+    bzero(line, 256);
+    while ((read = getline(&line, &len, fp)) != -1)  {
+        printf("Retrieved peer %s:\n", line);
+        simulate_remote_call(line,command);
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+}
+
 
 int main(int argc, char *argv[])
 {
-    char *hostnameOrIp;
-    char buffer[256];
-    int n;
-
-    if(argc < 2)
-        error("Hostname Required!");
-    hostnameOrIp = argv[1];
-
-    // receiving command from keyboard:
-    printf("Please enter command: ");
-    bzero(buffer,256);
-    fgets(buffer,255,stdin);
-
-    simulate_remote_call(hostnameOrIp, buffer);
-
-    printf("\nDONE!\n\n\n");
+    request_from_peers(TAIL_LOG_COMMAND);
     return 0;
 }
