@@ -9,7 +9,7 @@
 #include <net/if.h>
 
 #define BUFFER_SIZE 256
-#define PORT_NUMBER 4562
+#define PORT_NUMBER 4563
 
 
 void error(const char *msg)

@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 
 #define BUFFER_SIZE 256
-#define PORT_NUMBER 4562
+#define PORT_NUMBER 4563
 
 void error(const char *msg)
 {
@@ -35,11 +35,37 @@ int start_listening(int port){
 }
 
 
+void execute_command(int sockfd){
+    char buffer[BUFFER_SIZE];
+    int n;
+    
+    // Reads command from opened socket:
+    bzero(buffer,256);
+    n = read(sockfd,buffer,255);
+    if (n < 0)
+        error("ERROR reading from socket");
+
+    // Prints out requested command:
+    printf("Client request command: %s\n",buffer);
+
+    // Sends command results to client:
+    FILE *arq = popen(buffer, "r");
+    bzero(buffer,256);
+    while (fgets(buffer, sizeof(buffer), arq) != 0) {
+        write(sockfd,buffer,strlen(buffer));
+    }
+
+    // Clears environment:
+    bzero(buffer,256);
+    printf("Command response successfully sent.\n");
+    pclose(arq);
+}
+
+
 
 int main(int argc, char *argv[])
 {
-    int sockfd, listener, portno;
-    char buffer[BUFFER_SIZE];
+    int sockfd, listener;
     struct sockaddr_in client_addr;
     socklen_t client_len;
     int n;
@@ -55,28 +81,17 @@ int main(int argc, char *argv[])
         if (sockfd < 0)
             error("ERROR on accept");
         printf("Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
-
-        // Reads command from opened socket:
-        bzero(buffer,256);
-        n = read(sockfd,buffer,255);
-        if (n < 0)
-            error("ERROR reading from socket");
-
-        // Prints out requested command:
-        printf("Client request command: %s\n",buffer);
-
-        // Sends command results to client:
-        FILE *arq = popen(buffer, "r");
-        bzero(buffer,256);
-        while (fgets(buffer, sizeof(buffer), arq) != 0) {
-            write(sockfd,buffer,strlen(buffer));
+        
+        n = fork();
+        if(n>0){
+            close(sockfd); // Closes the accepted socket. and resume accepted loop
+        } else {
+            close(listener); // Closes listener socket
+            execute_command(sockfd); // Do stuff with the accepted socket.
+            close(sockfd); // When done, closes accepted socket
+            return 0; // ends child process.
         }
-
-        // Clears environment:
-        bzero(buffer,256);
-        printf("Command response successfully sent.\n");
-        pclose(arq);
-        close(sockfd);
+        
     }
     return 0;
 }
