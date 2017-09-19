@@ -1,13 +1,14 @@
-# SD
+# Trabalho Prático de Sistemas Distribuídos
 
-
-[Coisas a Fazer](https://github.com/gustavohsborba/SD/blob/master/doc/afazer.md "Coisas a Fazer")
+[TODO LIST](https://github.com/gustavohsborba/SD/blob/master/doc/afazer.md "Coisas a Fazer")
 
 
 ---- GROUP ----
 
 Gustavo Borba <borba@cefetmg.br>
-
+Marco Antonio <>
+Matheus Martins <matheus.mmag@gmail.com>
+Rafael Batista <leafarbts@gmail.com>
 
 ---- PRELIMINARIES ----
 
@@ -36,7 +37,7 @@ until the first release.  Afterward, all ongoing and future
 acquires pass immediately.
 
     /* Latch. */
-    struct latch 
+    struct latch
       {
         bool released;              /* Released yet? */
         struct lock monitor_lock;   /* Monitor lock. */

@@ -4,7 +4,7 @@
 ## Coisas a fazer:
 * Unit test
 * Executar unit test remotamente
-* enviar arquivos pela rede
+* -enviar arquivos pela rede-
 
 ## Como fazer:
 *Unit Test:* Em C/C++, gera no final um arquivo maquina.i.log em /tmp/. O executável também deve estar nessa pasta
