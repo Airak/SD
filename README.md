@@ -10,6 +10,18 @@ Marco Antonio <>
 Matheus Martins <matheus.mmag@gmail.com>
 Rafael Batista <leafarbts@gmail.com>
 
+---- PARA EXECUTAR ----
+
+* Para compilar, basta entrar em src/ e executar o comando:
+    make
+* Para executar o servidor:
+    ./server
+* Para executar o cliente:
+    ./cliente ip.do.servidor.aqui
+* O cliente solicitará um comando para ser executado.
+* O commando será executado no servidor e seu output será enviado pro cliente.
+
+
 ---- PRELIMINARIES ----
 
 >> If you have any preliminary comments on your submission, notes for
