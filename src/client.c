@@ -54,48 +54,40 @@ int connectSocket(char *hostnameOrIp, int port_number){
 }
 
 
-void simulate_remote_call(char *text_port_additional, char *hostnameOrIp){
+void simulate_remote_call(char *hostnameOrIp){
     char buffer[256];
-    int i, connection;
-    int int_port_additional = 0;
+    int i, connection = 0;
 
-    // get integer value for port
-    for(i=0; i<strlen(text_port_additional); i++){
-        int_port_additional = int_port_additional * 10 + ( text_port_additional[i] - '0' );
+    // Connecting to server socket:
+    int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
+
+    // send request for the specific log file
+    char server_number[2];
+    server_number[0] = (char) (connection + '0');
+    server_number[1] = '\0';
+    bzero(buffer,256);
+    strcpy(buffer,"cat maquina.");
+    strcat(buffer,server_number);
+    strcat(buffer,".log");
+
+    printf("%s: ",&buffer[4]);
+    printf(BOLD"\n\t\t\t---------- host %s logs: ----------\n"NO_COLOR, hostnameOrIp);
+    // Sending command to server:
+    i = write(sockfd,buffer,strlen(buffer));
+    if (i < 0)
+         error("ERROR writing to socket");
+
+    // Receiving response:
+    bzero(buffer,256);
+    while (read(sockfd,buffer,255) != 0) {
+        printf("%s\n",buffer);
+        bzero(buffer,256);
     }
 
-    for(connection = 0; connection < int_port_additional; connection++){
-        // Connecting to server socket:
-        int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER + connection);
-
-        // send request for the specific log file
-        char server_number[2];
-        server_number[0] = (char) (connection + '0');
-        server_number[1] = '\0';
-        bzero(buffer,256);
-        strcpy(buffer,"cat maquina.");
-        strcat(buffer,server_number);
-        strcat(buffer,".log");
-
-        printf("%s: ",&buffer[4]);
-        printf(BOLD"\n\t\t\t---------- host %s logs: ----------\n"NO_COLOR, hostnameOrIp);
-        // Sending command to server:
-        i = write(sockfd,buffer,strlen(buffer));
-        if (i < 0)
-             error("ERROR writing to socket");
-
-        // Receiving response:
-        bzero(buffer,256);
-        while (read(sockfd,buffer,255) != 0) {
-            printf("%s\n",buffer);
-            bzero(buffer,256);
-        }
-
-        close(sockfd);
-    }
+    close(sockfd);
 }
 
-int request_from_peers(char *text_port_additional, char *hostnameOrIp){
+int request_from_peers(){
     FILE * fp;
     char *line;
     size_t len;
@@ -108,8 +100,8 @@ int request_from_peers(char *text_port_additional, char *hostnameOrIp){
     line = malloc(256);
     bzero(line, 256);
     while ((read = getline(&line, &len, fp)) != -1)  {
-        printf("Retrieved peer %s:\n", line);
-        simulate_remote_call(text_port_additional,line);
+        printf("Retrieved peer %s:\n", "localhost");
+        simulate_remote_call(line);
     }
 
     fclose(fp);
@@ -120,16 +112,7 @@ int request_from_peers(char *text_port_additional, char *hostnameOrIp){
 }
 
 
-int main(int argc, char *argv[]) {
-    // check if all parameters were entered
-    if(argc < 2)
-        error("Number of Servers Required!");
-    if(argc < 3)
-        error("Hostname Required!"); 
-
-    char *text_port_additional = argv[1];
-    char *hostnameOrIp = argv[2];
-    
-    request_from_peers(text_port_additional,hostnameOrIp);
+int main(int argc, char *argv[]) {    
+    request_from_peers();
     return 0;
 }

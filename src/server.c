@@ -69,21 +69,22 @@ int main(int argc, char *argv[])
     struct sockaddr_in client_addr;
     socklen_t client_len;
     int i;
-    char* text_port_additional;
+    char* server_value;
+    int int_server_value;
     int int_port_additional = 0;
     int pid;
 
     // get parameter values
-    text_port_additional = argv[1];
+    server_value = argv[1];
 
     // get integer value for port
-    for(i=0; i<strlen(text_port_additional); i++){
-        int_port_additional = int_port_additional * 10 + ( text_port_additional[i] - '0' );
+    for(i=0; i<strlen(server_value); i++){
+        int_port_additional = int_port_additional * 10 + ( server_value[i] - '0' );
     }
     
 
     // Just listens to socket:
-    listener = start_listening(PORT_NUMBER + int_port_additional);
+    listener = start_listening(PORT_NUMBER);
 
     while(1){
 
