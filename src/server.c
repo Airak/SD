@@ -16,7 +16,6 @@ void error(const char *msg)
     exit(1);
 }
 
-
 int start_listening(int port){
     int listener, sockfd; // Socket file descriptors
     struct sockaddr_in serv_addr;
@@ -33,7 +32,6 @@ int start_listening(int port){
     listen(listener,5);
     return listener;
 }
-
 
 void execute_command(int sockfd){
     char buffer[BUFFER_SIZE];
@@ -68,20 +66,7 @@ int main(int argc, char *argv[])
     int sockfd, listener;
     struct sockaddr_in client_addr;
     socklen_t client_len;
-    int i;
-    char* server_value;
-    int int_server_value;
-    int int_port_additional = 0;
     int pid;
-
-    // get parameter values
-    server_value = argv[1];
-
-    // get integer value for port
-    for(i=0; i<strlen(server_value); i++){
-        int_port_additional = int_port_additional * 10 + ( server_value[i] - '0' );
-    }
-    
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER);

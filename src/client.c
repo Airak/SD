@@ -10,7 +10,6 @@
 
 #define BUFFER_SIZE 256
 #define PORT_NUMBER 4563
-#define TAIL_LOG_COMMAND "cd log && tail -n 30 *.log"
 
 // perfumaria
 #define BOLD "\e[01;39m"
@@ -36,7 +35,6 @@ int connectSocket(char *hostnameOrIp, int port_number){
 
     // resolving host:
     server = gethostbyname(hostnameOrIp);
-
     if (server == NULL)
         error("ERROR, no such host\n");
     bzero((char *) &serv_addr, sizeof(serv_addr)); // cleans serv_addr
@@ -54,44 +52,41 @@ int connectSocket(char *hostnameOrIp, int port_number){
 }
 
 
-void simulate_remote_call(char *hostnameOrIp){
+void simulate_remote_call(char *hostnameOrIp, char server_number[]){
     char buffer[256];
-    int i, connection = 0;
+    printf(BOLD"\n\t\t\t---------- Connecting to %s ----------\n"NO_COLOR, hostnameOrIp);
 
     // Connecting to server socket:
+    printf("Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
     int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
-
-    // send request for the specific log file
-    char server_number[2];
-    server_number[0] = (char) (connection + '0');
-    server_number[1] = '\0';
-    bzero(buffer,256);
+    
+    // Sending command to server:
     strcpy(buffer,"cat maquina.");
     strcat(buffer,server_number);
     strcat(buffer,".log");
-
-    printf("%s: ",&buffer[4]);
-    printf(BOLD"\n\t\t\t---------- host %s logs: ----------\n"NO_COLOR, hostnameOrIp);
-    // Sending command to server:
-    i = write(sockfd,buffer,strlen(buffer));
-    if (i < 0)
+    int n = write(sockfd,buffer,strlen(buffer));
+    if (n < 0)
          error("ERROR writing to socket");
 
     // Receiving response:
+    printf(BOLD"\n\t\t\t---------- %s log: ----------\n"NO_COLOR, &buffer[4]);
     bzero(buffer,256);
     while (read(sockfd,buffer,255) != 0) {
-        printf("%s\n",buffer);
+        printf("%s",buffer);
         bzero(buffer,256);
     }
-
+    printf("\n");
     close(sockfd);
 }
 
-int request_from_peers(){
+
+void request_from_peers(){
     FILE * fp;
     char *line;
     size_t len;
     ssize_t read;
+    int server_number_int = 0;
+    char server_number_string[256] = "0";
 
     fp = fopen("peers.txt", "r");
     if (fp == NULL)
@@ -100,19 +95,19 @@ int request_from_peers(){
     line = malloc(256);
     bzero(line, 256);
     while ((read = getline(&line, &len, fp)) != -1)  {
+        sprintf(server_number_string, "%d", server_number_int++);
         printf("Retrieved peer %s:\n", line);
-        simulate_remote_call(line);
+        simulate_remote_call(line,server_number_string);
     }
 
     fclose(fp);
     if (line)
         free(line);
-
-    return 0;
 }
 
 
-int main(int argc, char *argv[]) {    
+int main(int argc, char *argv[])
+{
     request_from_peers();
     return 0;
 }
