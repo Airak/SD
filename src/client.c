@@ -10,6 +10,7 @@
 
 #define BUFFER_SIZE 256
 #define PORT_NUMBER 4563
+#define FILE_SIZE 256
 
 // perfumaria
 #define BOLD "\e[01;39m"
@@ -53,7 +54,7 @@ int connectSocket(char *hostnameOrIp, int port_number){
 
 
 void simulate_remote_call(char *hostnameOrIp, char server_number[]){
-    char buffer[256];
+    char buffer[FILE_SIZE];
     printf(BOLD"\n\t\t\t---------- Connecting to %s ----------\n"NO_COLOR, hostnameOrIp);
 
     // Connecting to server socket:
@@ -70,10 +71,10 @@ void simulate_remote_call(char *hostnameOrIp, char server_number[]){
 
     // Receiving response:
     printf(BOLD"\n\t\t\t---------- %s log: ----------\n"NO_COLOR, &buffer[4]);
-    bzero(buffer,256);
+    bzero(buffer,FILE_SIZE);
     while (read(sockfd,buffer,255) != 0) {
         printf("%s",buffer);
-        bzero(buffer,256);
+        bzero(buffer,FILE_SIZE);
     }
     printf("\n");
     close(sockfd);
@@ -96,7 +97,6 @@ void request_from_peers(){
     bzero(line, 256);
     while ((read = getline(&line, &len, fp)) != -1)  {
         sprintf(server_number_string, "%d", server_number_int++);
-        printf("Retrieved peer %s:\n", line);
         simulate_remote_call(line,server_number_string);
     }
 
