@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <net/if.h>
+#include <time.h>
 
 #define BUFFER_SIZE 256
 #define PORT_NUMBER 4563
@@ -15,6 +16,8 @@
 // perfumaria
 #define BOLD "\e[01;39m"
 #define NO_COLOR "\e[00;39m"
+
+clock_t start, diff;
 
 void error(const char *msg)
 {
@@ -54,6 +57,7 @@ int connectSocket(char *hostnameOrIp, int port_number){
 
 
 void simulate_remote_call(char *hostnameOrIp, char server_number[]){
+    start = clock();
     char buffer[FILE_SIZE];
     printf(BOLD"\n\t\t\t---------- Connecting to %s ----------\n"NO_COLOR, hostnameOrIp);
 
@@ -78,6 +82,10 @@ void simulate_remote_call(char *hostnameOrIp, char server_number[]){
     }
     printf("\n");
     close(sockfd);
+    diff = clock() - diff;
+    printf(BOLD"\n\t\t\t---------- Connection info ----------\n"NO_COLOR);
+    int msec = diff * 1000 / CLOCKS_PER_SEC;
+    printf("Time taken for message exchange: %d seconds %d milliseconds\n\n", msec/1000, msec%1000);
 }
 
 
@@ -96,6 +104,7 @@ void request_from_peers(){
     line = malloc(256);
     bzero(line, 256);
     while ((read = getline(&line, &len, fp)) != -1)  {
+        line[strlen(line) - 1] = '\0'; // removing line break
         sprintf(server_number_string, "%d", server_number_int++);
         simulate_remote_call(line,server_number_string);
     }
