@@ -100,7 +100,7 @@ int request_from_peers(){
     line = malloc(256);
     bzero(line, 256);
     while ((read = getline(&line, &len, fp)) != -1)  {
-        printf("Retrieved peer %s:\n", "localhost");
+        printf("Retrieved peer %s:\n", line);
         simulate_remote_call(line);
     }
 
