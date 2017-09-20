@@ -109,7 +109,7 @@ int request_from_peers(char *text_port_additional, char *hostnameOrIp){
     bzero(line, 256);
     while ((read = getline(&line, &len, fp)) != -1)  {
         printf("Retrieved peer %s:\n", line);
-        simulate_remote_call(text_port_additional,hostnameOrIp);
+        simulate_remote_call(text_port_additional,line);
     }
 
     fclose(fp);
