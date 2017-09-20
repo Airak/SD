@@ -15,11 +15,12 @@ Rafael Batista <leafarbts@gmail.com>
 * Para compilar, basta entrar em src/ e executar o comando:
     make
 * Para executar o servidor:
-    ./server
+    ./server n
 * Para executar o cliente:
-    ./cliente ip.do.servidor.aqui
-* O cliente solicitará um comando para ser executado.
-* O commando será executado no servidor e seu output será enviado pro cliente.
+    ./cliente i ip.do.servidor.aqui
+
+* n é um número >=0 que identifica aquele servidor
+* i é a quantidade total de servidores disponíveis 
 
 
 ---- PRELIMINARIES ----

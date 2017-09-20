@@ -68,10 +68,20 @@ int main(int argc, char *argv[])
     int sockfd, listener;
     struct sockaddr_in client_addr;
     socklen_t client_len;
-    int n;
+    int i;
+    char* text_port_additional;
+    int int_port_additional = 0;
+
+    // get parameter values
+    text_port_additional = argv[1];
+
+    // get integer value for port
+    for(i=0; i<strlen(text_port_additional); i++){
+        int_port_additional = int_port_additional * 10 + ( text_port_additional[i] - '0' );
+    }
 
     // Just listens to socket:
-    listener = start_listening(PORT_NUMBER);
+    listener = start_listening(PORT_NUMBER + int_port_additional);
 
     while(1){
 
@@ -82,8 +92,8 @@ int main(int argc, char *argv[])
             error("ERROR on accept");
         printf("Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
         
-        n = fork();
-        if(n>0){
+        i = fork();
+        if(i>0){
             close(sockfd); // Closes the accepted socket. and resume accepted loop
         } else {
             close(listener); // Closes listener socket
