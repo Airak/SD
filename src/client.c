@@ -10,13 +10,18 @@
 
 #define BUFFER_SIZE 256
 #define PORT_NUMBER 4563
+#define TAIL_LOG_COMMAND "cd log && tail -n 30 *.log"
 
+// perfumaria
+#define BOLD "\e[01;39m"
+#define NO_COLOR "\e[00;39m"
 
 void error(const char *msg)
 {
     perror(msg);
     exit(1);
 }
+
 
 int connectSocket(char *hostnameOrIp, int port_number){
     int sockfd; // socket file descriptor
@@ -49,24 +54,10 @@ int connectSocket(char *hostnameOrIp, int port_number){
 }
 
 
-int main(int argc, char *argv[])
-{
-    int sockfd; // socket file descriptor
-    char *hostnameOrIp;
+void simulate_remote_call(char *text_port_additional, char *hostnameOrIp){
     char buffer[256];
     int i, connection;
-    char* text_port_additional;
     int int_port_additional = 0;
-
-    // check if all parameters were entered
-    if(argc < 2)
-        error("Number of Servers Required!");
-    if(argc < 3)
-        error("Hostname Required!"); 
-
-    // get parameter values
-    text_port_additional = argv[1];
-    hostnameOrIp = argv[2];
 
     // get integer value for port
     for(i=0; i<strlen(text_port_additional); i++){
@@ -75,7 +66,7 @@ int main(int argc, char *argv[])
 
     for(connection = 0; connection < int_port_additional; connection++){
         // Connecting to server socket:
-        sockfd = connectSocket(hostnameOrIp, PORT_NUMBER + connection);
+        int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER + connection);
 
         // send request for the specific log file
         char server_number[2];
@@ -87,7 +78,7 @@ int main(int argc, char *argv[])
         strcat(buffer,".log");
 
         printf("%s: ",&buffer[4]);
-
+        printf(BOLD"\n\t\t\t---------- host %s logs: ----------\n"NO_COLOR, hostnameOrIp);
         // Sending command to server:
         i = write(sockfd,buffer,strlen(buffer));
         if (i < 0)
@@ -102,6 +93,43 @@ int main(int argc, char *argv[])
 
         close(sockfd);
     }
+}
+
+int request_from_peers(char *text_port_additional, char *hostnameOrIp){
+    FILE * fp;
+    char *line;
+    size_t len;
+    ssize_t read;
+
+    fp = fopen("peers.txt", "r");
+    if (fp == NULL)
+        error("ERRO ao abrir arquivo de pares");
+
+    line = malloc(256);
+    bzero(line, 256);
+    while ((read = getline(&line, &len, fp)) != -1)  {
+        printf("Retrieved peer %s:\n", line);
+        simulate_remote_call(text_port_additional,hostnameOrIp);
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+
+    return 0;
+}
+
+
+int main(int argc, char *argv[]) {
+    // check if all parameters were entered
+    if(argc < 2)
+        error("Number of Servers Required!");
+    if(argc < 3)
+        error("Hostname Required!"); 
+
+    char *text_port_additional = argv[1];
+    char *hostnameOrIp = argv[2];
     
+    request_from_peers(text_port_additional,hostnameOrIp);
     return 0;
 }

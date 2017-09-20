@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
     int i;
     char* text_port_additional;
     int int_port_additional = 0;
+    int pid;
 
     // get parameter values
     text_port_additional = argv[1];
@@ -79,6 +80,7 @@ int main(int argc, char *argv[])
     for(i=0; i<strlen(text_port_additional); i++){
         int_port_additional = int_port_additional * 10 + ( text_port_additional[i] - '0' );
     }
+    
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER + int_port_additional);
@@ -92,8 +94,8 @@ int main(int argc, char *argv[])
             error("ERROR on accept");
         printf("Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
         
-        i = fork();
-        if(i>0){
+        pid = fork();
+        if(pid>0){
             close(sockfd); // Closes the accepted socket. and resume accepted loop
         } else {
             close(listener); // Closes listener socket
