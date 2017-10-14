@@ -1,33 +1,68 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <net/if.h>
-#include <time.h>
+#include <ctime>
+#include <fstream>
+#include <string>
+#include <stdarg.h>     /* va_list, va_start, va_arg, va_end */
 
 #define BUFFER_SIZE 256
 #define PORT_NUMBER 4563
 #define FILE_SIZE 256
 
-// perfumaria
-#define BOLD "\e[01;39m"
-#define NO_COLOR "\e[00;39m"
 #define DATA_FOLDER "../data/"
 #define LOG_FOLDER "../log/"
 #define CONF_FOLDER "../conf/"
 #define PEERS_FILE "../conf/peers.txt"
 
+
+// coloring logs:
+#define BOLD "\e[01;39m"
+#define NO_COLOR "\e[00;39m"
+#define RED "\e[31m"
+#define GREEN "\e[32m"
+#define LOG_MSG_INFO "\e[32m[INFO]:\e[00;39m"
+#define LOG_MSG_DANGER "\e[01;39m[DANGER]:\e[00;39m"
+#define LOG_MSG_ERROR "\e[01;31m[ERROR]:\e[00;39m"
+#define LOG_LEVEL_INFO 0
+#define LOG_LEVEL_DANGER 1
+#define LOG_LEVEL_ERROR 2
+
 clock_t start, diff;
+char *LOGFILE;
+
+
+
+void log(const char * msg, int log_lvl){
+    std::ofstream file;
+	file.open(LOGFILE,std::ofstream::out);
+    int i;
+	if (file.is_open()) {
+        if(log_lvl==0)
+            file << LOG_MSG_INFO;
+        else if(log_lvl==1)
+            file << LOG_MSG_DANGER;
+        else
+            file << LOG_MSG_ERROR;
+        for (i; msg[i]!='\0'; i++){
+			file << msg[i];
+		}
+        file << '\n';
+        file.close();
+    }
+}
 
 void error(const char *msg)
 {
+    log(msg, LOG_LEVEL_ERROR);
     perror(msg);
 }
-
 
 int connectSocket(char *hostnameOrIp, int port_number){
     int sockfd; // socket file descriptor
@@ -105,29 +140,24 @@ void simulate_remote_call(char *hostnameOrIp, char server_number[]){
 
 
 void request_from_peers(){
-    FILE * fp;
-    char *line;
+    std::ifstream fp;
+    std::string line;
     size_t len;
     ssize_t read;
     int server_number_int = 0;
     char server_number_string[256] = "0";
 
-    fp = fopen(PEERS_FILE, "r");
-    if (fp == NULL)
+    fp.open(PEERS_FILE);
+    if (!fp.is_open())
         error("ERRO ao abrir arquivo de pares");
 
-    line = malloc(256);
-    bzero(line, 256);
-    read = getline(&line, &len, fp); // Discards first line (commented line)
-    while ((read = getline(&line, &len, fp)) != -1)  {
-        line[strlen(line) - 1] = '\0'; // removing line break
+    getline(fp, line); // Discards first line (commented line)
+    while (!fp.eof())  {
+        getline(fp,line); // removing line break
         sprintf(server_number_string, "%d", server_number_int++);
-        simulate_remote_call(line,server_number_string);
+        simulate_remote_call((char*) line.c_str(),server_number_string);
     }
-
-    fclose(fp);
-    if (line)
-        free(line);
+    fp.close();
 }
 
 
