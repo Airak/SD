@@ -1,3 +1,6 @@
 #ignorar exercutáveis server & client
 server
 client
+find
+store
+server_rpc
