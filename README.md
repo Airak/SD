@@ -24,4 +24,4 @@ Executar comando find
   ./find K
   K: Número inteiro referente a qual node o valor desejado deve ser guardado. 
 
-É necessário adicionar todos os IPs dos servidores em peers.txt
+Também é necessário adicionar em /config/peers.txt o index e IP do peer e do próximo peer, respectivamente. 
