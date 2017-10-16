@@ -1,7 +1,7 @@
-all: server client
+all: server_rpc find store logger
 
 %: %.cc
 	g++ -std=c++11 $< -o $@
 
-%: %.c
-	gcc $< -o $@
+clean:
+	find . -type f  ! -name "*.*"  -delete 

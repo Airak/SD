@@ -1,3 +1,4 @@
+#include "chord.h"
 #include "middleware.h"
 #include <string.h>
 

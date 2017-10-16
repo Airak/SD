@@ -3,4 +3,5 @@ server
 client
 find
 store
+logger
 server_rpc

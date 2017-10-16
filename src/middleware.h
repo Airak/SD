@@ -67,7 +67,7 @@ void log(int log_lvl, const char * msg){
             file << LOG_MSG_DANGER;
         else
             file << LOG_MSG_ERROR;
-        for (i; msg[i]!='\0'; i++){
+        for (i=0; msg[i]!='\0'; i++){
 			file << msg[i];
 		}
         file << '\n';
@@ -126,7 +126,7 @@ int start_listening(int port){
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(port);
-    if (bind(listener, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+    if (bind(listener, ((struct sockaddr *) &serv_addr), sizeof(serv_addr)) < 0)
         error("ERROR on binding");
     listen(listener,5);
     return listener;
