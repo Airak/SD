@@ -14,10 +14,14 @@ Rafael Batista <rafael.cefetmg@outlook.com>
 
 Para compilar, basta entrar em src/ e executar o comando:
   make
-Para executar o servidor:
-  ./server n
-Para executar o cliente:
-  ./cliente
+Executar o servidor:
+  ./server_rpc
+Executar comando store:
+  ./store K V
+  K: Número inteiro referente a qual node o valor desejado deve ser guardado. 
+  V: Valor desejado a se guardar para o valor de key igual a K.
+Executar comando find
+  ./find K
+  K: Número inteiro referente a qual node o valor desejado deve ser guardado. 
 
 É necessário adicionar todos os IPs dos servidores em peers.txt
-n é um número >=0 que identifica aquele servidor de acordo com a listagem em peers.txt (inciando de zero)
