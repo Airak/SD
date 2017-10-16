@@ -4,6 +4,10 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
+    if(argc < 1){
+        printf("Usage: %s key", argv[0]);
+        exit(1);
+    }
     int k = atoi(argv[1]);
 
     chord_init();
@@ -11,9 +15,10 @@ int main(int argc, char const *argv[]) {
     ifstream file;
     string line;
     int c;
+
     if(!key_is_mine(k)){
         char *command = (char*) malloc(sizeof(char)*30);
-        snprintf(command, sizeof(command), "./find %d", k);
+        snprintf(command, sizeof(char)*30, "./find %d", k);
         remote_call((char*) me->peers.ip[0], command);
         exit(0);
     }

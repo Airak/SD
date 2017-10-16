@@ -1,1 +1,5 @@
 [01;31m[ERROR]:[00;39mCould not connect with server
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with server
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with server
