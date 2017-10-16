@@ -1,0 +1,1 @@
+[01;31m[ERROR]:[00;39mCould not connect with server

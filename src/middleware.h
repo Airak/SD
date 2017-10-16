@@ -1,3 +1,6 @@
+#ifndef MIDDLEWARE_H
+#define MIDDLEWARE_H
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -22,7 +25,6 @@ using namespace std;
 #define DATA_FOLDER "../data/"
 #define LOG_FOLDER "../log/"
 #define CONF_FOLDER "../conf/"
-#define PEERS_FILE "../conf/peers.txt"
 #define KEYS_FILE "../data/keys.txt"
 #define LOG_FILE "../log/log.txt"
 
@@ -37,6 +39,7 @@ using namespace std;
 #define LOG_LEVEL_INFO 0
 #define LOG_LEVEL_DANGER 1
 #define LOG_LEVEL_ERROR 2
+#define PRINT
 
 // Connection and log functions.
 void log(int log_lvl, const char * msg);
@@ -45,9 +48,15 @@ int connectSocket(char *hostnameOrIp, int port_number);
 void remote_call(char *hostnameOrIp, char *command);
 int start_listening(int port);
 
+// DHT functions
+bool key_is_mine(int k);
+bool i_have_this_key(int k);
 
 
 void log(int log_lvl, const char * msg){
+    #ifdef PRINT
+        printf("[LOG] %s %s", ((log_lvl==0)? LOG_MSG_INFO : ((log_lvl==1)? LOG_MSG_DANGER : LOG_MSG_ERROR) ), msg);
+    #endif
     ofstream file;
 	file.open(LOG_FILE,ofstream::app);
     int i;
@@ -153,7 +162,7 @@ void execute_command(int sockfd){
 
 void remote_call(char *hostnameOrIp, char *command){
     char buffer[FILE_SIZE];
-    printf("Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+    //printf("Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
 
     int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
     if (sockfd == -1) {
@@ -176,10 +185,11 @@ void remote_call(char *hostnameOrIp, char *command){
     }
 }
 
-
-bool key_is_mine(int k){
-    return true; // TODO
-}
+#ifndef CHORD_H
+    bool key_is_mine(int k){
+        return true; // TODO
+    }
+#endif
 
 bool i_have_this_key(int k){
     ifstream file;
@@ -198,3 +208,5 @@ bool i_have_this_key(int k){
     }
     return false;
 }
+
+#endif

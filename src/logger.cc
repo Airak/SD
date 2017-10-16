@@ -1,4 +1,5 @@
 #include "middleware.h"
+#include <string.h>
 
 #define LOG_COMMAND "cat ../log/log.txt"
 
@@ -6,11 +7,10 @@ void log(){
     clock_t start, diff;
 
     std::ifstream fp;
-    std::string line;
+    std::string line, buffer;
     size_t len;
     ssize_t read;
     int server_number_int = 0;
-    char server_number_string[256] = "0";
 
     fp.open(PEERS_FILE);
     if (!fp.is_open())
@@ -19,10 +19,12 @@ void log(){
     getline(fp, line); // Discards first line (commented line)
     while (!fp.eof())  {
         getline(fp,line); // removing line break
+        if(fp.eof() || line.empty())
+            continue;
         start = clock();
-        char buffer[FILE_SIZE];
-        printf("%s\n\n\t\t\t---------- %s's log: ----------\n%s", BOLD, line , NO_COLOR);
-        remote_call(line, LOG_COMMAND);
+        printf("%s\n\n\t\t\t---------- %s's log: ----------\n%s", BOLD, line.c_str() , NO_COLOR);
+        buffer = LOG_COMMAND;
+        remote_call((char*)line.c_str(), (char*)buffer.c_str());
         printf("\n");
         diff = clock() - start;
         printf("%s\n\t\t\t---------- Connection info ----------\n%s", BOLD, NO_COLOR);
@@ -33,7 +35,7 @@ void log(){
 }
 
 // ESSE ARQUIVO SERÁ ÚTIL PARA COLOCAR AS CHAMADAS FEITAS PELO TECLADO
-int main(string args[]){
+int main(int argc, char const *argv[]) {
     log();
     return 0;
 }

@@ -1,12 +1,12 @@
+#include "chord.h"
 #include "middleware.h"
 using namespace std;
-
-#define NEXT "127.0.0.1"
-
 
 int main(int argc, char const *argv[]) {
     int k = atoi(argv[1]);
     char *value = (char*) argv[2];
+
+    chord_init();
 
     ofstream file, keys_file;
     string line;
@@ -15,7 +15,7 @@ int main(int argc, char const *argv[]) {
     if(!key_is_mine(k)){
         char *command = (char*) malloc(sizeof(char)*15);
         sprintf(command, "./store %d %s", k, value);
-        remote_call((char*) NEXT, command);
+        remote_call((char*) me->peers.ip[0], command);
         exit(0);
     }
     if(i_have_this_key(k)){
