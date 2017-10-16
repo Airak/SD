@@ -3,6 +3,10 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
+    if(argc < 2){
+        printf("Usage: %s key value", argv[0]);
+        exit(1);
+    }
     int k = atoi(argv[1]);
     char *value = (char*) argv[2];
 
@@ -13,8 +17,8 @@ int main(int argc, char const *argv[]) {
     int c;
 
     if(!key_is_mine(k)){
-        char *command = (char*) malloc(sizeof(char)*15);
-        sprintf(command, "./store %d %s", k, value);
+        char *command = (char*) malloc(sizeof(char)*30);
+        snprintf(command, sizeof(char)*30, "./store %d %s", k, value);
         remote_call((char*) me->peers.ip[0], command);
         exit(0);
     }

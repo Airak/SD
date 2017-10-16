@@ -19,7 +19,7 @@ using namespace std;
 #define IP_LEN 16
 
 // M is no. of nodes and N is no. of peers per ID
-#define M 16
+#define M 4
 #define N 1
 
 struct finger_table
@@ -78,10 +78,19 @@ void chord_init(){
     }
 }
 
-
+int who_should_handle_this_key(int k){
+    int last_i = 0;
+    for(int i=0; i<N; i++)
+        if((k%M)==me->peers.index[i])
+            return i;
+        else if((k%M) > me->peers.index[i])
+            return last_i;
+        else last_i = i;
+    return last_i;
+}
 
 bool key_is_mine(int k){
-    return k==me->index;
+    return (k%M)==me->index;
 }
 
 
