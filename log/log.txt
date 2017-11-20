@@ -3,3 +3,20 @@
 [01;31m[ERROR]:[00;39mCould not connect with server
 [01;31m[ERROR]:[00;39mERROR connecting
 [01;31m[ERROR]:[00;39mCould not connect with server
+[32m[INFO]:[00;39mServer's Physical layer listening to port 990786456...
+
+[32m[INFO]:[00;39mServer's Physical layer listening to port -2022400808...
+
+[32m[INFO]:[00;39mConnection stabilished from 
+
+[32m[INFO]:[00;39mServer's Physical layer listening to port -2022400808...
+
+[32m[INFO]:[00;39mClient request command: 
+
+[01;39m[DANGER]:[00;39mkey -967199416 not found!
+[32m[INFO]:[00;39mCommand response successfully sent.
+
+[32m[INFO]:[00;39mServer's Physical layer listening to port 1519003208...
+
+[32m[INFO]:[00;39mServer's Physical layer listening to port 4563...
+

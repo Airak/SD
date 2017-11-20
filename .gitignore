@@ -1,7 +1,11 @@
-#ignorar exercutáveis server & client
+#ignorar exercutáveis
 server
 client
 find
 store
 logger
 server_rpc
+.idea
+CMakeLists.txt
+cmake-build-debug
+cmake-build-debug/*

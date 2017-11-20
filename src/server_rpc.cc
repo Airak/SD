@@ -14,11 +14,11 @@ int main(int argc, char *argv[])
     while(1){
 
         // Accepting Connection. Receiving command request:
-        printf("Server's Physical layer listening to port %d...\n", PORT_NUMBER);
+        log(LOG_LEVEL_INFO, "Server's Physical layer listening to port %d...\n", PORT_NUMBER);
         sockfd = accept(listener, (struct sockaddr *) &client_addr, &client_len);
         if (sockfd < 0)
             error("ERROR on accept");
-        printf("Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
+        log(LOG_LEVEL_INFO, "Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
 
         pid = fork();
         if(pid>0){

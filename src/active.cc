@@ -1,4 +1,5 @@
 #include "middleware.h"
+#include "chord.h"
 
 #define LOG_COMMAND "cat ../log/log.txt"
 
@@ -23,7 +24,7 @@ int main(string args[]){
         start = clock();
         char buffer[FILE_SIZE];
         printf("%s\n\n\t\t\t---------- %s's log: ----------\n%s", BOLD, line , NO_COLOR);
-        remote_call(line, LOG_COMMAND);
+        remote_call((char*) line.c_str(), LOG_COMMAND);
         printf("\n");
         diff = clock() - start;
         printf("%s\n\t\t\t---------- Connection info ----------\n%s", BOLD, NO_COLOR);

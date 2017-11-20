@@ -1,6 +1,5 @@
 #include "chord.h"
 #include "middleware.h"
-#include <stdlib.h>
 using namespace std;
 
 int main(int argc, char const *argv[]) {
@@ -23,7 +22,8 @@ int main(int argc, char const *argv[]) {
         exit(0);
     }
     if(!i_have_this_key(k)){
-        printf("key not found!");
+        log(LOG_LEVEL_DANGER, "key %d not found!", k);
+        printf("key %d not found!", k);
         exit(0);
     }
 

@@ -31,8 +31,6 @@ using namespace std;
 // coloring logs:
 #define BOLD "\e[01;39m"
 #define NO_COLOR "\e[00;39m"
-#define RED "\e[31m"
-#define GREEN "\e[32m"
 #define LOG_MSG_INFO "\e[32m[INFO]:\e[00;39m"
 #define LOG_MSG_DANGER "\e[01;39m[DANGER]:\e[00;39m"
 #define LOG_MSG_ERROR "\e[01;31m[ERROR]:\e[00;39m"
@@ -42,8 +40,8 @@ using namespace std;
 #define PRINT
 
 // Connection and log functions.
-void log(int log_lvl, const char * msg);
-void error(const char *msg);
+void log(int log_lvl, const char * msg, ...);
+void error(const char *msg, ...);
 int connectSocket(char *hostnameOrIp, int port_number);
 void remote_call(char *hostnameOrIp, char *command);
 int start_listening(int port);
@@ -52,32 +50,40 @@ int start_listening(int port);
 bool key_is_mine(int k);
 bool i_have_this_key(int k);
 
+void log(int log_lvl, const char *msg, ...){
 
-void log(int log_lvl, const char * msg){
+    char *formatted_msg = (char*) malloc(sizeof(char)*255);
+    const char *log_level_string = ((log_lvl==0)? LOG_MSG_INFO : ((log_lvl==1)? LOG_MSG_DANGER : LOG_MSG_ERROR));
+
+    va_list args;
+    va_start(args, msg);
+    vsprintf(formatted_msg, msg, args);
+    va_end(args);
+
     #ifdef PRINT
-        printf("[LOG] %s %s", ((log_lvl==0)? LOG_MSG_INFO : ((log_lvl==1)? LOG_MSG_DANGER : LOG_MSG_ERROR) ), msg);
+        printf("[LOG] %s %s", log_level_string, formatted_msg);
     #endif
+
     ofstream file;
 	file.open(LOG_FILE,ofstream::app);
-    int i;
 	if (file.is_open()) {
-        if(log_lvl==0)
-            file << LOG_MSG_INFO;
-        else if(log_lvl==1)
-            file << LOG_MSG_DANGER;
-        else
-            file << LOG_MSG_ERROR;
-        for (i=0; msg[i]!='\0'; i++){
-			file << msg[i];
-		}
+        file << log_level_string;
+        file << formatted_msg;
         file << '\n';
         file.close();
     }
 }
 
-void error(const char *msg)
+void error(const char *msg, ...)
 {
-    log(LOG_LEVEL_ERROR,msg);
+    char *formatted_msg = (char*) malloc(sizeof(char)*255);
+
+    va_list args;
+    va_start(args, msg);
+    vsprintf(formatted_msg, msg, args);
+    va_end(args);
+
+    log(LOG_LEVEL_ERROR,formatted_msg);
     perror(msg);
 }
 
@@ -143,7 +149,7 @@ void execute_command(int sockfd){
         error("ERROR reading from socket");
 
     // Prints out requested command:
-    printf("Client request command: %s\n",buffer);
+    log(LOG_LEVEL_INFO, "Client request command: %s\n",buffer);
 
     // Sends command results to client:
     FILE *arq = popen(buffer, "r");
@@ -154,7 +160,7 @@ void execute_command(int sockfd){
 
     // Clears environment:
     bzero(buffer,256);
-    printf("Command response successfully sent.\n");
+    log(LOG_LEVEL_INFO, "Command response successfully sent.\n");
     pclose(arq);
 }
 
@@ -162,7 +168,7 @@ void execute_command(int sockfd){
 
 void remote_call(char *hostnameOrIp, char *command){
     char buffer[FILE_SIZE];
-    //printf("Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+    log(LOG_LEVEL_INFO, "Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
 
     int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
     if (sockfd == -1) {
