@@ -5,7 +5,7 @@
 
 int main(string args[]){
     clock_t start, diff;
-    error("SORRY, NOT YET IMPLEMENTED!!!");
+    //error("SORRY, NOT YET IMPLEMENTED!!!");
 
     std::ifstream fp;
     std::string line;

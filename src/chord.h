@@ -24,19 +24,21 @@ using namespace std;
 
 struct finger_table
 {   // succ_ip_address[i], and IPS from nodes whose ID is (my_id + 2^i) mod M
-    unsigned long index[N];
-    char ip[N][IP_LEN];
+    unsigned long index;
+    char ip[IP_LEN];
+    int port;
 };
 
 struct node
 {
     int index;
     char self_ip[IP_LEN];
+    int self_port;
     //time_t time;                /* time of last message received */
     //time_t reply_time;          /* time of last correct reply received */
     //time_t pinged_time;         /* time of last request */
     //int pinged;                 /* how many requests we sent since last reply */
-    finger_table peers;
+    finger_table peers[N];
 };
 
 struct node *me = new node();
@@ -61,7 +63,10 @@ void chord_init(){
     pos = line.find(delimiter);
     me->index = atoi(line.substr(0, pos).c_str());
     line.erase(0, pos + delimiter.length());
-    strcpy(me->self_ip, line.c_str());
+    pos = line.find(delimiter);
+    strcpy(me->self_ip, line.substr(0, pos).c_str());
+    line.erase(0, pos + delimiter.length());
+    me->self_port = atoi(line.c_str());
 
     // get peers index and ip
     int i=0;
@@ -70,9 +75,9 @@ void chord_init(){
         if(fp.eof())
             continue;
         pos = line.find(delimiter);
-        me->peers.index[i] = atoi(line.substr(0, pos).c_str());
+        me->peers[i].index = atoi(line.substr(0, pos).c_str());
         line.erase(0, pos + delimiter.length());
-        strcpy(me->peers.ip[i], line.c_str());
+        strcpy(me->peers[i].ip, line.c_str());
         //printf("\n\ni=%d, key=%d, copying %s\n\n", i, me->peers.index[i], line.c_str());
         i++;
     }
@@ -81,9 +86,9 @@ void chord_init(){
 int who_should_handle_this_key(int k){
     int last_i = 0;
     for(int i=0; i<N; i++)
-        if((k%M)==me->peers.index[i])
+        if((k%M)==me->peers[i].index)
             return i;
-        else if((k%M) > me->peers.index[i])
+        else if((k%M) > me->peers[i].index)
             return last_i;
         else last_i = i;
     return last_i;
