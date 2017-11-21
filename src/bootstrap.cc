@@ -1,6 +1,8 @@
 #include "middleware.h"
 #include <arpa/inet.h>
+#include <string.h>
 
+#define BUFFER_SIZE 256
 #define Send_Successor "./send_successor"
 #define Send_Successor_2 "./send_successor_2"
 // ./send_successor id_suc ip_suc
@@ -40,16 +42,28 @@ int main(int argc, char *argv[])
 
             // start connection to node
             if (n == 1){ // no system yet    	
-            	std::string buffer = "" + n + " " + n + " " + connected_IP;
-            	write(buffer);
+                char buffer[BUFFER_SIZE];
+                strcpy(buffer,itoa(n));
+                strcat(buffer," ");
+                strcat(buffer,itoa(n));
+                strcat(buffer," ");
+                strcat(buffer,connected_IP.c_str());
+            	write(sockfd, buffer, strlen(buffer));
             } else {
+                char buffer[BUFFER_SIZE];
             	// send to node 
-            	std::string buffer = Send_Successor + " " + n + " " + connected_IP;
+            	strcpy(buffer, Send_Successor);
+                strcat(buffer," ");
+                strcat(buffer,itoa(n));
+                strcat(buffer," ");
+                strcat(buffer,connected_IP.c_str());
             	std::string id_and_ip = include_node_call((char*)main_IP.c_str(), (char*)buffer.c_str());
 
             	// send back successor
-            	buffer = "" + n + " " + id_and_ip;
-            	write(buffer);
+                strcpy(buffer,itoa(n));
+                strcat(buffer," ");
+                strcat(buffer,id_and_ip.c_str());
+                write(sockfd, buffer, strlen(buffer));
             }
             
             // depois envio algo
