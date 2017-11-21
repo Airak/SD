@@ -1,5 +1,5 @@
 #include "middleware.h"
-#include "chord.h"
+#include "ring.h"
 
 #define LOG_COMMAND "cat ../log/log.txt"
 

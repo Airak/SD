@@ -27,10 +27,10 @@ struct finger_table
 {   // succ_ip_address[i], and IPS from nodes whose ID is (my_id + 2^i) mod M
     unsigned long index;
     char ip[IP_LEN];
-    char port[PORT_LEN];
-    time_t time;                /* time of last message received */
-    time_t reply_time;          /* time of last correct reply received */
-    time_t pinged_time;         /* time of last request */
+    //char port[PORT_LEN];
+    //time_t time;                /* time of last message received */
+    //time_t reply_time;          /* time of last correct reply received */
+    //time_t pinged_time;         /* time of last request */
     int pinged;                 /* how many requests we sent since last reply */
 
 };
@@ -40,7 +40,7 @@ struct node
     int index;
     char self_ip[IP_LEN];
     finger_table peers[N];
-    finger_table pings[N];
+    //finger_table pings[N];
 };
 
 struct node *me = new node();
@@ -48,7 +48,7 @@ struct node *me = new node();
 
 
 
-void chord_init(){
+void ring_init(){
     ifstream fp;
     string line, space = " ";
 

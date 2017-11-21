@@ -1,4 +1,4 @@
-#include "chord.h"
+#include "ring.h"
 #include "middleware.h"
 using namespace std;
 
@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
     }
     int k = atoi(argv[1]);
 
-    chord_init();
+    ring_init();
 
     ifstream file;
     string line;

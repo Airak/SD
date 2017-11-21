@@ -1,13 +1,15 @@
-#include "chord.h"
+#include "ring.h"
 #include "middleware.h"
 #include <arpa/inet.h>
 
 #define BOOTSTRAPPER_IP ""
+#define FILE_TMP "../conf/peers.tmp"
 
 void init_ring_with_bootstrapper();
+void ask_heartbeat();
 void send_heartbeat();
-void receive_heartbeat();
 void check_next_peer();
+void redo_ring();
 
 int main(int argc, char *argv[])
 {
@@ -79,7 +81,35 @@ void init_ring_with_bootstrapper(){
     // Receiving response:
     bzero(buffer,FILE_SIZE);
     read(sockfd,buffer,255);
-    printf("%s", buffer);
+
+    ifstream fin(PEERS_FILE);
+    ofstream fout(FILE_TMP);
+    string newsuccessor(buffer);
+
+    pos = newsuccessor.find(delimiter);
+    int myindex = atoi(newsuccessor.substr(0, pos).c_str());
+    line.erase(0, pos + delimiter.length());
+    pos = line.find(delimiter);
+    int succindex = atoi(newsuccessor.substr(0, pos).c_str());
+    strcpy(buffer, newsuccessor.c_str());
+
+    if (!fin.is_open())
+        printf("ERRO ao abrir arquivo de pares");
+
+    getline(fin, line);   // Discards first line (commented line)
+    fout << line << "\n"; // keeps it in the file
+
+    getline(fin,line);    // first ip is always self.
+    pos = line.find(delimiter);
+    line.erase(0, pos + delimiter.length());
+    fout << myindex << " " << line << "\n"; // keeps ip in the file, changes ID
+
+    getline(fin,line);    // successor's id and ip
+    fout << succindex << " " << buffer; // replaces to new successor
+
+    fin.close();
+    fout.close();
+    rename("example.tmp", "example.txt");
 
     close(sockfd);
 }

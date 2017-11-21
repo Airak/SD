@@ -5,12 +5,15 @@
 #include <stdlib.h>
 
 #define BUFFER_SIZE 256
+#define BOOTSTRAPPER_CONF_FILE "../conf/bootstrapper.txt"
 #define Send_Successor "./send_successor"
 #define Send_Successor_2 "./send_successor_2"
 // ./send_successor id_suc ip_suc
 // ./send_successor_2 id_new  n_suc ip_suc
 
 std::string include_node_call(char *, char *);
+std::string get_next_ip();
+void set_next_ip();
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +23,6 @@ int main(int argc, char *argv[])
     int pid;
 
     int n = 0; // number of nodes that entered the system
-    std::string main_IP;
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER);
@@ -44,6 +46,7 @@ int main(int argc, char *argv[])
             char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
             read(sockfd,buffer,255);
             std::string connected_IP(buffer);
+            std::string next_IP = get_next_ip();
 
             // start connection to node
             if (n == 1){ // no system yet
@@ -63,7 +66,7 @@ int main(int argc, char *argv[])
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,connected_IP.c_str());
-            	std::string id_and_ip = include_node_call((char*)main_IP.c_str(), (char*)buffer);
+            	std::string id_and_ip = include_node_call((char*)next_IP.c_str(), (char*)buffer);
 
             	// send back successor
                 strcpy(buffer,std::to_string(n).c_str());
@@ -76,8 +79,7 @@ int main(int argc, char *argv[])
             // execute_command(sockfd); // Do stuff with the accepted socket.
             close(sockfd); // When done, closes accepted socket
 
-
-            main_IP = connected_IP;
+            set_next_ip(connected_IP);
 
             return 0; // ends child process.
         }
@@ -85,6 +87,34 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
+
+std::string get_next_ip(){
+    ifstream fp;
+    string line;
+
+    fp.open(BOOTSTRAPPER_CONF_FILE);
+    if (!fp.is_open())
+        printf("ERRO ao abrir arquivo de pares");
+
+    getline(fp,line); // first ip in bootstrapper file is next ip.
+    fp.close();
+    return line;
+}
+
+void set_next_ip(std::string ip){
+    ofstream fp;
+    string line;
+
+    fp.open(BOOTSTRAPPER_CONF_FILE, std::ofstream::out | std::ofstream::trunc);
+    if (!fp.is_open())
+        printf("ERRO ao abrir arquivo de pares");
+
+    fp<<ip;
+    fp.close();
+    return line;
+}
+
 
 std::string include_node_call(char *hostnameOrIp, char *command){
 	std::string to_return = "";

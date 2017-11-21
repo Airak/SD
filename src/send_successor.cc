@@ -4,7 +4,7 @@
 
 #define FILE_TMP "../conf/peers.tmp"
 
-#include "chord.h"
+#include "ring.h"
 using namespace std;
 
 
