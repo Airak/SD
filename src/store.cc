@@ -19,7 +19,7 @@ int main(int argc, char const *argv[]) {
     if(!key_is_mine(k)){
         char *command = (char*) malloc(sizeof(char)*30);
         snprintf(command, sizeof(char)*30, "./store %d %s", k, value);
-        remote_call((char*) me->peers.ip[0], command);
+        remote_call((char*) me->peers[0].ip, command);
         exit(0);
     }
     if(i_have_this_key(k)){

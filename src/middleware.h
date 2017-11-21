@@ -44,6 +44,7 @@ void log(int log_lvl, const char * msg, ...);
 void error(const char *msg, ...);
 int connectSocket(char *hostnameOrIp, int port_number);
 void remote_call(char *hostnameOrIp, char *command);
+void send_successor();
 int start_listening(int port);
 
 // DHT functions
