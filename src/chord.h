@@ -20,8 +20,8 @@ using namespace std;
 #define PORT_LEN 8
 
 // M is no. of nodes and N is no. of peers per ID
-#define M 4
-#define N 1
+int M = 4;
+#define N 2
 
 struct finger_table
 {   // succ_ip_address[i], and IPS from nodes whose ID is (my_id + 2^i) mod M
@@ -40,6 +40,7 @@ struct node
     int index;
     char self_ip[IP_LEN];
     finger_table peers[N];
+    finger_table pings[N];
 };
 
 struct node *me = new node();

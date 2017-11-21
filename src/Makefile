@@ -1,7 +1,7 @@
-all: server_rpc find store logger
+all: P2P_node find store logger send_successor bootstrap
 
 %: %.cc
 	g++ -std=c++11 $< -o $@
 
 clean:
-	find . -type f  ! -name "*.*" -o -name "Makefile"  -delete
+	rm $(ls --hide=*.* --hide=Makefile)
