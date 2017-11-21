@@ -192,9 +192,9 @@ void remote_call(char *hostnameOrIp, char *command){
 }
 
 #ifndef CHORD_H
-    bool key_is_mine(int k){
-        return true; // TODO
-    }
+    //bool key_is_mine(int k){
+    //    return true; // TODO
+    //}
 #endif
 
 bool i_have_this_key(int k){

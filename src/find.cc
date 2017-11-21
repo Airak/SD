@@ -18,7 +18,8 @@ int main(int argc, char const *argv[]) {
     if(!key_is_mine(k)){
         char *command = (char*) malloc(sizeof(char)*30);
         snprintf(command, sizeof(char)*30, "./find %d", k);
-        remote_call((char*) me->peers.ip[0], command);
+        int index = who_should_handle_this_key(k);
+        remote_call((char*) me->peers[index].ip, command);
         exit(0);
     }
     if(!i_have_this_key(k)){
