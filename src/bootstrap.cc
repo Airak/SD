@@ -1,6 +1,8 @@
 #include "middleware.h"
 #include <arpa/inet.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define BUFFER_SIZE 256
 #define Send_Successor "./send_successor"
@@ -19,7 +21,6 @@ int main(int argc, char *argv[])
 
     int n = 0; // number of nodes that entered the system
     std::string main_IP;
-    std::string connected_IP;
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER);
@@ -32,35 +33,40 @@ int main(int argc, char *argv[])
             error("ERROR on accept");
         log(LOG_LEVEL_INFO, "Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
         n++; // add node counter
-        connected_IP = argv[1];
 
         pid = fork();
         if(pid>0){
             close(sockfd); // Closes the accepted socket. and resume accepted loop
-        } else {
+        }
+        else {
             close(listener); // Closes listener socket
 
+            char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+            read(sockfd,buffer,255);
+            std::string connected_IP(buffer);
+
             // start connection to node
-            if (n == 1){ // no system yet    	
-                char buffer[BUFFER_SIZE];
-                strcpy(buffer,itoa(n));
+            if (n == 1){ // no system yet
+                strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
-                strcat(buffer,itoa(n));
+                strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,connected_IP.c_str());
+
             	write(sockfd, buffer, strlen(buffer));
-            } else {
-                char buffer[BUFFER_SIZE];
+            }
+            else {
+
             	// send to node 
             	strcpy(buffer, Send_Successor);
                 strcat(buffer," ");
-                strcat(buffer,itoa(n));
+                strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,connected_IP.c_str());
-            	std::string id_and_ip = include_node_call((char*)main_IP.c_str(), (char*)buffer.c_str());
+            	std::string id_and_ip = include_node_call((char*)main_IP.c_str(), (char*)buffer);
 
             	// send back successor
-                strcpy(buffer,itoa(n));
+                strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,id_and_ip.c_str());
                 write(sockfd, buffer, strlen(buffer));
@@ -69,10 +75,13 @@ int main(int argc, char *argv[])
             // depois envio algo
             // execute_command(sockfd); // Do stuff with the accepted socket.
             close(sockfd); // When done, closes accepted socket
+
+
+            main_IP = connected_IP;
+
             return 0; // ends child process.
         }
 
-        main_IP = connected_IP;
     }
     return 0;
 }

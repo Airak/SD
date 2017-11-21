@@ -5,6 +5,9 @@ find
 store
 logger
 server_rpc
+P2P_node
+bootstrap
+send_successor
 .idea
 CMakeLists.txt
 cmake-build-debug

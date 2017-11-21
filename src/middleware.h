@@ -90,7 +90,7 @@ void error(const char *msg, ...)
 
 int connectSocket(char *hostnameOrIp, int port_number){
     int sockfd; // socket file descriptor
-    struct hostent *server;
+    struct hostent *peer;
     struct sockaddr_in serv_addr;
     struct ifreq ifr;
 
@@ -100,17 +100,17 @@ int connectSocket(char *hostnameOrIp, int port_number){
         error("ERROR opening socket");
     } else {
         // resolving host:
-        server = gethostbyname(hostnameOrIp);
-        if (server == NULL) {
+        peer = gethostbyname(hostnameOrIp);
+        if (peer == NULL) {
             error("ERROR, no such host\n");
         } else {
             bzero((char *) &serv_addr, sizeof(serv_addr)); // cleans serv_addr
 
             // configuring and connecting socket:
             serv_addr.sin_family = AF_INET;
-            bcopy( (char *)server->h_addr,
+            bcopy( (char *)peer->h_addr,
                    (char *)&serv_addr.sin_addr.s_addr,
-                   server->h_length);
+                   peer->h_length);
             serv_addr.sin_port = htons(port_number);
             if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
                 error("ERROR connecting");
@@ -169,13 +169,13 @@ void execute_command(int sockfd){
 
 void remote_call(char *hostnameOrIp, char *command){
     char buffer[FILE_SIZE];
-    log(LOG_LEVEL_INFO, "Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+    log(LOG_LEVEL_INFO, "Connecting to peer %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
 
     int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
     if (sockfd == -1) {
-        error("Could not connect with server");
+        error("Could not connect with peer");
     }else {
-        // Sending command to server:
+        // Sending command to peer:
         int n = write(sockfd,command,strlen(command));
         if (n < 0){
              error("ERROR writing to socket");
