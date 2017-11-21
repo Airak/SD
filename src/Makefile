@@ -4,4 +4,4 @@ all: P2P_node find store logger send_successor bootstrap
 	g++ -std=c++11 $< -o $@
 
 clean:
-	ls --hide=*.* --hide=Makefile | rm
+	rm $(ls --hide=*.* --hide=Makefile)
