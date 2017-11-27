@@ -4,6 +4,7 @@ client
 find
 store
 logger
+ping
 server_rpc
 P2P_node
 bootstrap

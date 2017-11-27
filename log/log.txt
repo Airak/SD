@@ -20,3 +20,61 @@
 
 [32m[INFO]:[00;39mServer's Physical layer listening to port 4563...
 
+[01;31m[ERROR]:[00;39mERROR, no such host
+
+[01;31m[ERROR]:[00;39mCould not connect with boostrapper server
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mServer's Physical layer listening to port 4563...
+
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[01;31m[ERROR]:[00;39mERROR, no such host
+
+[01;31m[ERROR]:[00;39mCould not connect with boostrapper server
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mServer's Physical layer listening to port 4563...
+
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[01;31m[ERROR]:[00;39mERROR, no such host
+
+[01;31m[ERROR]:[00;39mCould not connect with boostrapper server
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mServer's Physical layer listening to port 4563...
+
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket
+[32m[INFO]:[00;39mSending ping to peer 192.168.0.4 on port 4563...
+
+[01;31m[ERROR]:[00;39mERROR connecting
+[01;31m[ERROR]:[00;39mCould not connect with peer
+[01;31m[ERROR]:[00;39mERROR writing to socket

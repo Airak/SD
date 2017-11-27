@@ -12,6 +12,7 @@ https://github.com/jech/dht
 #include <cstring>
 #include <fstream>
 #include <string>
+#include <ctime>
 using namespace std;
 
 
@@ -30,7 +31,7 @@ struct finger_table
     //char port[PORT_LEN];
     //time_t time;                /* time of last message received */
     //time_t reply_time;          /* time of last correct reply received */
-    //time_t pinged_time;         /* time of last request */
+    time_t pinged_time;         /* time of last request */
     int pinged;                 /* how many requests we sent since last reply */
 
 };
@@ -77,6 +78,9 @@ void ring_init(){
         me->peers[i].index = atoi(line.substr(0, pos).c_str());
         line.erase(0, pos + delimiter.length());
         strcpy(me->peers[i].ip, line.c_str());
+
+        me->peers[i].pinged = 0;
+        me->peers[i].pinged_time = time(0);
         //printf("\n\ni=%d, key=%d, copying %s\n\n", i, me->peers.index[i], line.c_str());
         i++;
     }

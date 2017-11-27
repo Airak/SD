@@ -62,7 +62,7 @@ void log(int log_lvl, const char *msg, ...){
     va_end(args);
 
     #ifdef PRINT
-        printf("[LOG] %s %s", log_level_string, formatted_msg);
+        printf("[LOG] %s %s\n", log_level_string, formatted_msg);
     #endif
 
     ofstream file;

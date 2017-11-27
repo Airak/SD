@@ -9,7 +9,6 @@
 
 void init_ring_with_bootstrapper();
 void ask_ping();
-void send_ack();
 void check_next_peer();
 void redo_ring();
 
@@ -21,7 +20,7 @@ int main(int argc, char *argv[])
     int pid;
 
     init_ring_with_bootstrapper();
-
+    ring_init();
     std::thread ping(ask_ping);
 
     // Just listens to socket:
@@ -120,36 +119,43 @@ void init_ring_with_bootstrapper(){
 
 
 
-void send_heartbeat(){
+void ask_ping(){
     while(1) {
-        ring_init();
 
-        char buffer[FILE_SIZE];
+        char buffer[BUFFER_SIZE];
+        char buff2[BUFFER_SIZE];
 
-
-        log(LOG_LEVEL_INFO, "Connecting to peer %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+        log(LOG_LEVEL_INFO, "Sending ping to peer %s on port %d...\n", me->peers[0].ip, PORT_NUMBER);
 
         int sockfd = connectSocket(me->peers[0].ip, PORT_NUMBER);
-        if (sockfd == -1) {
+        if (sockfd == -1)
             error("Could not connect with peer");
-        }else {
-            // Sending command to peer:
-            int n = write(sockfd,command,strlen(command));
-            if (n < 0){
-                error("ERROR writing to socket");
-            } else {
-                // Receiving response:
-                bzero(buffer,FILE_SIZE);
-                while (read(sockfd,buffer,255) != 0) {
-                    printf("%s",buffer);
-                    bzero(buffer,FILE_SIZE);
-                }
-                printf("\n");
-                close(sockfd);
-            }
+
+        // Sending command to peer:
+        strcpy(buffer, "./ping ");
+        sprintf(buff2, "%d", ++(me->peers[0].pinged));
+        strcat(buffer, buff2);
+        int n = write(sockfd,buffer,strlen(buffer));
+        if (n < 0)
+            error("ERROR writing to socket");
+
+        // Receiving response: pong n+1
+        bzero(buffer,FILE_SIZE);
+        sprintf(buffer, "%d", me->peers[0].pinged);
+        strcpy(buff2, "pong ");
+        strcat(buff2, buffer);
+        bzero(buffer,FILE_SIZE);
+        if(read(sockfd,buffer,255) != 0) {
+            // deu ruim, o cara não respondeu. Tem de refazer o anel.
+        } else if(strcmp(buff2,buffer)){
+            // deu ruim, tem de refazer o anel
+        }
+        else { // Ok
+            me->peers[0].pinged_time = time(0);
         }
 
-        remote_call(,
-        std::this_thread::sleep_for(2s);
+        close(sockfd);
+        std::chrono::seconds sec(2);
+        std::this_thread::sleep_for(sec);
     }
 }
