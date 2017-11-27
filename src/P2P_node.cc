@@ -56,6 +56,7 @@ void init_ring_with_bootstrapper(){
     ifstream fp, bt;
     string line, space = " ";
     char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+    char *bootstrapper_ip = (char*) malloc(sizeof(char)*BUFFER_SIZE);
 
     fp.open(PEERS_FILE);
     if (!fp.is_open())
@@ -74,16 +75,15 @@ void init_ring_with_bootstrapper(){
 
     bt.open(BOOTSTRAPPER_FILE);
     getline(bt, line);
-    strcpy(buffer, line.c_str());
+    strcpy(bootstrapper_ip, line.c_str());
 
     //strcpy(buffer, BOOTSTRAPPER_IP);
     log(LOG_LEVEL_INFO, "Connecting to bootstrapper on %s", buffer);
-    int sockfd = connectSocket(buffer, PORT_NUMBER);
+    int sockfd = connectSocket(bootstrapper_ip, PORT_NUMBER);
     if (sockfd == -1)
         error("Could not connect with boostrapper server");
 
     // Sending IP to bootstrap server:
-    strcpy(buffer, line.c_str());
     log(LOG_LEVEL_INFO, "Sending message to bootstrapper: %s", buffer);
     int n = write(sockfd,buffer,strlen(buffer));
     if (n < 0)
@@ -98,12 +98,12 @@ void init_ring_with_bootstrapper(){
     // my index
     pos = newsuccessor.find(delimiter);
     int myindex = atoi(newsuccessor.substr(0, pos).c_str());
-    line.erase(0, pos + delimiter.length());
+    newsuccessor.erase(0, pos + delimiter.length());
 
     // successor's index
-    pos = line.find(delimiter);
+    pos = newsuccessor.find(delimiter);
     int succindex = atoi(newsuccessor.substr(0, pos).c_str());
-    line.erase(0, pos + delimiter.length());
+    newsuccessor.erase(0, pos + delimiter.length());
 
     // successor's ip
     strcpy(buffer, newsuccessor.c_str());

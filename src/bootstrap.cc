@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
     while(1){
         // Accepting Connection. Receiving command request:
-        log(LOG_LEVEL_INFO, "Server's Physical layer listening to port %d...\n", PORT_NUMBER);
+        log(LOG_LEVEL_INFO, "Bootstrap Server listening to port %d...\n", PORT_NUMBER);
         sockfd = accept(listener, (struct sockaddr *) &client_addr, &client_len);
         if (sockfd < 0)
             error("ERROR on accept");
@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
 
             // start connection to node
             if (n == 1){ // no system yet
-                log(LOG_LEVEL_INFO, "No Network yet. Sending self ip: %d %d %s\n", n, n, connected_IP.c_str());
+                log(LOG_LEVEL_INFO, "No Network yet. Sending self ip: %d %d %s\n", n, n, buffer);
+                bzero(buffer, BUFFER_SIZE);
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcpy(buffer,std::to_string(n).c_str());
@@ -113,6 +114,7 @@ void set_next_ip(std::string ip){
         printf("ERRO ao abrir arquivo de pares");
 
     fp<<ip;
+    fp<<"\n";
     fp.close();
 }
 
