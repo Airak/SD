@@ -7,7 +7,7 @@
 
 #define BUFFER_SIZE 256
 #define BOOTSTRAPPER_CONF_FILE "../conf/bootstrapper.txt"
-#define Send_Successor "./send_successor"
+#define SEND_SUCCESSOR "./send_successor"
 #define Send_Successor_2 "./send_successor_2"
 // ./send_successor id_suc ip_suc
 // ./send_successor_2 id_new  n_suc ip_suc
@@ -99,9 +99,9 @@ void trata_requisicao()
 
         // send to node
         bzero(buffer, BUFFER_SIZE);
-        strcpy(buffer, Send_Successor);
+        strcpy(buffer, SEND_SUCCESSOR);
         strcat(buffer," ");
-        strcpy(buffer,std::to_string(n).c_str());
+        strcat(buffer,std::to_string(n).c_str());
         strcat(buffer," ");
         strcat(buffer,connected_IP.c_str());
         log(LOG_LEVEL_INFO, "Sending to %s: %s", next_IP.c_str(), buffer);
