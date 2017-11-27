@@ -1,13 +1,15 @@
 #include "ring.h"
 #include "middleware.h"
 #include <arpa/inet.h>
+#include <chrono>
+#include <thread>         // std::thread
 
 #define BOOTSTRAPPER_IP ""
 #define FILE_TMP "../conf/peers.tmp"
 
 void init_ring_with_bootstrapper();
-void ask_heartbeat();
-void send_heartbeat();
+void ask_ping();
+void send_ack();
 void check_next_peer();
 void redo_ring();
 
@@ -19,6 +21,8 @@ int main(int argc, char *argv[])
     int pid;
 
     init_ring_with_bootstrapper();
+
+    std::thread ping(ask_ping);
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER);
@@ -114,3 +118,38 @@ void init_ring_with_bootstrapper(){
     close(sockfd);
 }
 
+
+
+void send_heartbeat(){
+    while(1) {
+        ring_init();
+
+        char buffer[FILE_SIZE];
+
+
+        log(LOG_LEVEL_INFO, "Connecting to peer %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+
+        int sockfd = connectSocket(me->peers[0].ip, PORT_NUMBER);
+        if (sockfd == -1) {
+            error("Could not connect with peer");
+        }else {
+            // Sending command to peer:
+            int n = write(sockfd,command,strlen(command));
+            if (n < 0){
+                error("ERROR writing to socket");
+            } else {
+                // Receiving response:
+                bzero(buffer,FILE_SIZE);
+                while (read(sockfd,buffer,255) != 0) {
+                    printf("%s",buffer);
+                    bzero(buffer,FILE_SIZE);
+                }
+                printf("\n");
+                close(sockfd);
+            }
+        }
+
+        remote_call(,
+        std::this_thread::sleep_for(2s);
+    }
+}

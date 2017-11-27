@@ -13,7 +13,7 @@
 
 std::string include_node_call(char *, char *);
 std::string get_next_ip();
-void set_next_ip();
+void set_next_ip(std::string);
 
 int main(int argc, char *argv[])
 {
@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
             char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
             read(sockfd,buffer,255);
             std::string connected_IP(buffer);
-            std::string next_IP = get_next_ip();
 
             // start connection to node
             if (n == 1){ // no system yet
@@ -59,6 +58,7 @@ int main(int argc, char *argv[])
             	write(sockfd, buffer, strlen(buffer));
             }
             else {
+                std::string next_IP = get_next_ip();
 
             	// send to node 
             	strcpy(buffer, Send_Successor);
@@ -74,9 +74,7 @@ int main(int argc, char *argv[])
                 strcat(buffer,id_and_ip.c_str());
                 write(sockfd, buffer, strlen(buffer));
             }
-            
-            // depois envio algo
-            // execute_command(sockfd); // Do stuff with the accepted socket.
+
             close(sockfd); // When done, closes accepted socket
 
             set_next_ip(connected_IP);
@@ -112,7 +110,6 @@ void set_next_ip(std::string ip){
 
     fp<<ip;
     fp.close();
-    return line;
 }
 
 
