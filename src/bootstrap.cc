@@ -44,22 +44,21 @@ int main(int argc, char *argv[])
             close(listener); // Closes listener socket
 
             char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+            bzero(buffer, BUFFER_SIZE);
             read(sockfd,buffer,255);
             std::string connected_IP(buffer);
 
             // start connection to node
             if (n == 1){ // no system yet
                 bzero(buffer, BUFFER_SIZE);
-                strcpy(buffer,std::to_string(n).c_str());
-                strcat(buffer," ");
-                strcpy(buffer,std::to_string(n).c_str());
-                strcat(buffer," ");
+                strcpy(buffer,"1 1 ");
                 strcat(buffer,connected_IP.c_str());
 
                 log(LOG_LEVEL_INFO, "No Network yet. Sending self ip: %s", buffer);
             	write(sockfd, buffer, strlen(buffer));
             }
             else {
+                log(LOG_LEVEL_INFO, "Alredy have Network. Finding next ip...");
                 std::string next_IP = get_next_ip();
                 log(LOG_LEVEL_INFO, "Next IP: %s", next_IP.c_str());
 
@@ -73,6 +72,7 @@ int main(int argc, char *argv[])
             	std::string id_and_ip = include_node_call((char*)next_IP.c_str(), (char*)buffer);
 
             	// send back successor
+                bzero(buffer, BUFFER_SIZE);
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,id_and_ip.c_str());
