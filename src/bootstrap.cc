@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
 
             // start connection to node
             if (n == 1){ // no system yet
+                log(LOG_LEVEL_INFO, "No Network yet. Sending self ip: %d %d %s\n", n, n, connected_IP.c_str());
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcpy(buffer,std::to_string(n).c_str());
@@ -59,19 +60,22 @@ int main(int argc, char *argv[])
             }
             else {
                 std::string next_IP = get_next_ip();
+                log(LOG_LEVEL_INFO, "Next IP: %s\n", next_IP.c_str());
 
-            	// send to node 
+                // send to node
             	strcpy(buffer, Send_Successor);
                 strcat(buffer," ");
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,connected_IP.c_str());
+                log(LOG_LEVEL_INFO, "Sending to %s: %s\n", next_IP.c_str(), buffer);
             	std::string id_and_ip = include_node_call((char*)next_IP.c_str(), (char*)buffer);
 
             	// send back successor
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,id_and_ip.c_str());
+                log(LOG_LEVEL_INFO, "Sending to %s: %s\n", connected_IP.c_str(), buffer);
                 write(sockfd, buffer, strlen(buffer));
             }
 

@@ -51,23 +51,36 @@ int start_listening(int port);
 bool key_is_mine(int k);
 bool i_have_this_key(int k);
 
+
+#define DTTMFMT "%Y-%m-%d %H:%M:%S "
+#define DTTMSZ 21
+static char *getDtTm (char *buff) {
+    time_t t = time (0);
+    strftime (buff, DTTMSZ, DTTMFMT, localtime (&t));
+    return buff;
+}
+
+
 void log(int log_lvl, const char *msg, ...){
 
     char *formatted_msg = (char*) malloc(sizeof(char)*255);
     const char *log_level_string = ((log_lvl==0)? LOG_MSG_INFO : ((log_lvl==1)? LOG_MSG_DANGER : LOG_MSG_ERROR));
+    char dt[DTTMSZ];
 
     va_list args;
     va_start(args, msg);
     vsprintf(formatted_msg, msg, args);
     va_end(args);
+    getDtTm(dt);
 
     #ifdef PRINT
-        printf("[LOG] %s %s\n", log_level_string, formatted_msg);
+        printf("[LOG] %s -- %s %s\n", dt, log_level_string, formatted_msg);
     #endif
 
     ofstream file;
 	file.open(LOG_FILE,ofstream::app);
 	if (file.is_open()) {
+        file << dt << " -- ";
         file << log_level_string;
         file << formatted_msg;
         file << '\n';

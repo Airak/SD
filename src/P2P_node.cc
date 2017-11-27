@@ -94,11 +94,17 @@ void init_ring_with_bootstrapper(){
     ofstream fout(FILE_TMP);
     string newsuccessor(buffer);
 
+    // my index
     pos = newsuccessor.find(delimiter);
     int myindex = atoi(newsuccessor.substr(0, pos).c_str());
     line.erase(0, pos + delimiter.length());
+
+    // successor's index
     pos = line.find(delimiter);
     int succindex = atoi(newsuccessor.substr(0, pos).c_str());
+    line.erase(0, pos + delimiter.length());
+
+    // successor's ip
     strcpy(buffer, newsuccessor.c_str());
 
     if (!fin.is_open())
