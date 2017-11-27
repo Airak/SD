@@ -93,8 +93,10 @@ void init_ring_with_bootstrapper(){
     // Receiving response:
     bzero(buffer,FILE_SIZE);
     n = read(sockfd,buffer,255);
+    close(sockfd);
     if(n < 0)
         error("Error connecting with Bootstrapper.");
+
     string newsuccessor(buffer);
     log(LOG_LEVEL_INFO, "Bootstrapper response: %s", buffer);
 
@@ -133,8 +135,6 @@ void init_ring_with_bootstrapper(){
     fout.close();
     remove(PEERS_FILE);
     rename(FILE_TMP, PEERS_FILE);
-
-    close(sockfd);
 }
 
 

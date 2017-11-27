@@ -42,6 +42,7 @@ using namespace std;
 // Connection and log functions.
 void log(int log_lvl, const char * msg, ...);
 void error(const char *msg, ...);
+void fatal(const char *msg, ...);
 int connectSocket(char *hostnameOrIp, int port_number);
 void remote_call(char *hostnameOrIp, char *command);
 void send_successor();
@@ -99,6 +100,20 @@ void error(const char *msg, ...)
 
     log(LOG_LEVEL_ERROR,formatted_msg);
     perror(msg);
+}
+
+void fatal(const char *msg, ...)
+{
+    char *formatted_msg = (char*) malloc(sizeof(char)*255);
+
+    va_list args;
+    va_start(args, msg);
+    vsprintf(formatted_msg, msg, args);
+    va_end(args);
+
+    log(LOG_LEVEL_ERROR,formatted_msg);
+    perror(msg);
+    exit(1);
 }
 
 int connectSocket(char *hostnameOrIp, int port_number){
