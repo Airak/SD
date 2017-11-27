@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
     init_ring_with_bootstrapper();
     ring_init();
-    std::thread ping(ask_ping);
+    //std::thread ping(ask_ping);
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER);
