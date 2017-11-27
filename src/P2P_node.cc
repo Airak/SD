@@ -70,18 +70,21 @@ void init_ring_with_bootstrapper(){
     pos = line.find(delimiter);
     line.erase(0, pos + delimiter.length());
     strcpy(buffer, line.c_str());
+    log(LOG_LEVEL_INFO, "Self IP: %s", buffer);
 
-    //bt.open(BOOTSTRAPPER_FILE);
-    //getline(bt, line);
-    //strcpy(buffer, line.c_str());
+    bt.open(BOOTSTRAPPER_FILE);
+    getline(bt, line);
+    strcpy(buffer, line.c_str());
 
-    strcpy(buffer, BOOTSTRAPPER_IP);
+    //strcpy(buffer, BOOTSTRAPPER_IP);
+    log(LOG_LEVEL_INFO, "Connecting to bootstrapper on %s", buffer);
     int sockfd = connectSocket(buffer, PORT_NUMBER);
-
     if (sockfd == -1)
         error("Could not connect with boostrapper server");
 
     // Sending IP to bootstrap server:
+    strcpy(buffer, line.c_str());
+    log(LOG_LEVEL_INFO, "Sending message to bootstrapper: %s", buffer);
     int n = write(sockfd,buffer,strlen(buffer));
     if (n < 0)
         error("ERROR writing to socket");
@@ -89,10 +92,8 @@ void init_ring_with_bootstrapper(){
     // Receiving response:
     bzero(buffer,FILE_SIZE);
     read(sockfd,buffer,255);
-
-    ifstream fin(PEERS_FILE);
-    ofstream fout(FILE_TMP);
     string newsuccessor(buffer);
+    log(LOG_LEVEL_INFO, "Bootstrapper response: %s", buffer);
 
     // my index
     pos = newsuccessor.find(delimiter);
@@ -107,8 +108,11 @@ void init_ring_with_bootstrapper(){
     // successor's ip
     strcpy(buffer, newsuccessor.c_str());
 
+
+    ifstream fin(PEERS_FILE);
+    ofstream fout(FILE_TMP);
     if (!fin.is_open())
-        printf("ERRO ao abrir arquivo de pares");
+        error("ERRO ao abrir arquivo de pares");
 
     getline(fin, line);   // Discards first line (commented line)
     fout << line << "\n"; // keeps it in the file
@@ -121,6 +125,7 @@ void init_ring_with_bootstrapper(){
     getline(fin,line);    // successor's id and ip
     fout << succindex << " " << buffer; // replaces to new successor
 
+    log(LOG_LEVEL_INFO, "Written on file: myindex=%d, succindex=%d, succip=%s", myindex, succindex, buffer);
     fin.close();
     fout.close();
     remove(PEERS_FILE);
