@@ -4,8 +4,9 @@
 #include <chrono>
 #include <thread>         // std::thread
 
-#define BOOTSTRAPPER_IP ""
+#define BOOTSTRAPPER_IP "25.10.20.8"
 #define FILE_TMP "../conf/peers.tmp"
+#define BOOTSTRAPPER_FILE "../conf/bootstrapper.txt"
 
 void init_ring_with_bootstrapper();
 void ask_ping();
@@ -20,8 +21,8 @@ int main(int argc, char *argv[])
     int pid;
 
     init_ring_with_bootstrapper();
-    ring_init();
-    std::thread ping(ask_ping);
+    //ring_init();
+    //std::thread ping(ask_ping);
 
     // Just listens to socket:
     listener = start_listening(PORT_NUMBER);
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 
 void init_ring_with_bootstrapper(){
 
-    ifstream fp;
+    ifstream fp, bt;
     string line, space = " ";
     char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
 
@@ -69,6 +70,10 @@ void init_ring_with_bootstrapper(){
     pos = line.find(delimiter);
     line.erase(0, pos + delimiter.length());
     strcpy(buffer, line.c_str());
+
+    //bt.open(BOOTSTRAPPER_FILE);
+    //getline(bt, line);
+    //strcpy(buffer, line.c_str());
 
     strcpy(buffer, BOOTSTRAPPER_IP);
     int sockfd = connectSocket(buffer, PORT_NUMBER);
@@ -112,7 +117,8 @@ void init_ring_with_bootstrapper(){
 
     fin.close();
     fout.close();
-    rename("example.tmp", "example.txt");
+    remove(PEERS_FILE);
+    rename(FILE_TMP, PEERS_FILE);
 
     close(sockfd);
 }
