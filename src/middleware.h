@@ -82,7 +82,7 @@ void log(int log_lvl, const char *msg, ...){
 	file.open(LOG_FILE,ofstream::app);
 	if (file.is_open()) {
         file << log_level_string;
-        file << << " " << dt << " -- ";
+        file << " " << dt << " -- ";
         file << formatted_msg;
         file << '\n';
         file.close();
