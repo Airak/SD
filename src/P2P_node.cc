@@ -145,7 +145,7 @@ void ask_ping(){
         char buffer[BUFFER_SIZE];
         char buff2[BUFFER_SIZE];
 
-        log(LOG_LEVEL_INFO, "Sending ping to peer %s on port %d...\n", me->peers[0].ip, PORT_NUMBER);
+        log(LOG_LEVEL_INFO, "Sending ping to peer %s on port %d...", me->peers[0].ip, PORT_NUMBER);
 
         int sockfd = connectSocket(me->peers[0].ip, PORT_NUMBER);
         if (sockfd == -1)
@@ -171,6 +171,7 @@ void ask_ping(){
             // deu ruim, tem de refazer o anel
         }
         else { // Ok
+            log(LOG_LEVEL_INFO, "%s correctly received", buff2);
             me->peers[0].pinged_time = time(0);
         }
 

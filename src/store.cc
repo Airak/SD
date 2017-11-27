@@ -8,7 +8,13 @@ int main(int argc, char const *argv[]) {
         exit(1);
     }
     int k = atoi(argv[1]);
-    char *value = (char*) argv[2];
+    char *value = (char*) malloc(sizeof(char)*FILE_SIZE);
+    strcpy(value, argv[2]);
+
+    for(int i=3; i<argc; i++){
+        strcat(value, " ");
+        strcat(value, argv[i]);
+    }
 
     ring_init();
 
@@ -29,7 +35,7 @@ int main(int argc, char const *argv[]) {
 
     char filename[15];
     sprintf(filename, "%s%d.txt", DATA_FOLDER,k);
-    file.open(filename, ofstream::out | ofstream::app);
+    file.open(filename, ofstream::out | std::ofstream::trunc);
     if (!file.is_open())
         error("Failure opening file");
     file << value;

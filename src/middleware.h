@@ -81,8 +81,8 @@ void log(int log_lvl, const char *msg, ...){
     ofstream file;
 	file.open(LOG_FILE,ofstream::app);
 	if (file.is_open()) {
-        file << dt << " -- ";
         file << log_level_string;
+        file << << " " << dt << " -- ";
         file << formatted_msg;
         file << '\n';
         file.close();
@@ -130,7 +130,7 @@ int connectSocket(char *hostnameOrIp, int port_number){
         // resolving host:
         peer = gethostbyname(hostnameOrIp);
         if (peer == NULL) {
-            error("ERROR, no such host\n");
+            error("ERROR, no such host");
         } else {
             bzero((char *) &serv_addr, sizeof(serv_addr)); // cleans serv_addr
 
@@ -178,7 +178,7 @@ void execute_command(int sockfd){
         error("ERROR reading from socket");
 
     // Prints out requested command:
-    log(LOG_LEVEL_INFO, "Client request command: %s\n",buffer);
+    log(LOG_LEVEL_INFO, "Client request command: %s",buffer);
 
     // Sends command results to client:
     FILE *arq = popen(buffer, "r");
@@ -189,7 +189,7 @@ void execute_command(int sockfd){
 
     // Clears environment:
     bzero(buffer,256);
-    log(LOG_LEVEL_INFO, "Command response successfully sent.\n");
+    log(LOG_LEVEL_INFO, "Command response successfully sent.");
     pclose(arq);
 }
 
@@ -197,7 +197,7 @@ void execute_command(int sockfd){
 
 void remote_call(char *hostnameOrIp, char *command){
     char buffer[FILE_SIZE];
-    log(LOG_LEVEL_INFO, "Connecting to peer %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+    log(LOG_LEVEL_INFO, "Connecting to peer %s on port %d...", hostnameOrIp, PORT_NUMBER);
 
     int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
     if (sockfd == -1) {
