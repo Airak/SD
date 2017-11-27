@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     int pid;
 
     init_ring_with_bootstrapper();
-    //ring_init();
+    ring_init();
     //std::thread ping(ask_ping);
 
     // Just listens to socket:
@@ -92,7 +92,9 @@ void init_ring_with_bootstrapper(){
 
     // Receiving response:
     bzero(buffer,FILE_SIZE);
-    read(sockfd,buffer,255);
+    n = read(sockfd,buffer,255);
+    if(n < 0)
+        error("Error connecting with Bootstrapper.");
     string newsuccessor(buffer);
     log(LOG_LEVEL_INFO, "Bootstrapper response: %s", buffer);
 

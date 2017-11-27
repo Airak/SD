@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
                 log(LOG_LEVEL_INFO, "Next IP: %s", next_IP.c_str());
 
                 // send to node
+                bzero(buffer, BUFFER_SIZE);
             	strcpy(buffer, Send_Successor);
                 strcat(buffer," ");
                 strcpy(buffer,std::to_string(n).c_str());
@@ -83,8 +84,6 @@ int main(int argc, char *argv[])
             close(sockfd); // When done, closes accepted socket
 
             set_next_ip(connected_IP);
-
-            return 0; // ends child process.
         }
 
     }
