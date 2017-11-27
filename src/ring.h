@@ -72,8 +72,6 @@ void ring_init(){
     int i=0;
     while (!fp.eof() && i<N)  {
         getline(fp,line);
-        if(fp.eof())
-            continue;
         pos = line.find(delimiter);
         me->peers[i].index = atoi(line.substr(0, pos).c_str());
         line.erase(0, pos + delimiter.length());
