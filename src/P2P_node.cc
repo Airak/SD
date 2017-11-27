@@ -70,6 +70,7 @@ void init_ring_with_bootstrapper(){
     string delimiter = " ";
     pos = line.find(delimiter);
     line.erase(0, pos + delimiter.length());
+    bzero(buffer, BUFFER_SIZE);
     strcpy(buffer, line.c_str());
     log(LOG_LEVEL_INFO, "Self IP: %s", buffer);
 
@@ -78,7 +79,7 @@ void init_ring_with_bootstrapper(){
     strcpy(bootstrapper_ip, line.c_str());
 
     //strcpy(buffer, BOOTSTRAPPER_IP);
-    log(LOG_LEVEL_INFO, "Connecting to bootstrapper on %s", buffer);
+    log(LOG_LEVEL_INFO, "Connecting to bootstrapper on %s", bootstrapper_ip);
     int sockfd = connectSocket(bootstrapper_ip, PORT_NUMBER);
     if (sockfd == -1)
         error("Could not connect with boostrapper server");

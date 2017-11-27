@@ -29,11 +29,11 @@ int main(int argc, char *argv[])
 
     while(1){
         // Accepting Connection. Receiving command request:
-        log(LOG_LEVEL_INFO, "Bootstrap Server listening to port %d...\n", PORT_NUMBER);
+        log(LOG_LEVEL_INFO, "Bootstrap Server listening to port %d...", PORT_NUMBER);
         sockfd = accept(listener, (struct sockaddr *) &client_addr, &client_len);
         if (sockfd < 0)
             error("ERROR on accept");
-        log(LOG_LEVEL_INFO, "Connection stabilished from %s\n", inet_ntoa(client_addr.sin_addr));
+        log(LOG_LEVEL_INFO, "Connection stabilished from %s", inet_ntoa(client_addr.sin_addr));
         n++; // add node counter
 
         pid = fork();
@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
 
             // start connection to node
             if (n == 1){ // no system yet
-                log(LOG_LEVEL_INFO, "No Network yet. Sending self ip: %d %d %s\n", n, n, buffer);
                 bzero(buffer, BUFFER_SIZE);
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
@@ -57,11 +56,12 @@ int main(int argc, char *argv[])
                 strcat(buffer," ");
                 strcat(buffer,connected_IP.c_str());
 
+                log(LOG_LEVEL_INFO, "No Network yet. Sending self ip: %s", buffer);
             	write(sockfd, buffer, strlen(buffer));
             }
             else {
                 std::string next_IP = get_next_ip();
-                log(LOG_LEVEL_INFO, "Next IP: %s\n", next_IP.c_str());
+                log(LOG_LEVEL_INFO, "Next IP: %s", next_IP.c_str());
 
                 // send to node
             	strcpy(buffer, Send_Successor);
@@ -69,14 +69,14 @@ int main(int argc, char *argv[])
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,connected_IP.c_str());
-                log(LOG_LEVEL_INFO, "Sending to %s: %s\n", next_IP.c_str(), buffer);
+                log(LOG_LEVEL_INFO, "Sending to %s: %s", next_IP.c_str(), buffer);
             	std::string id_and_ip = include_node_call((char*)next_IP.c_str(), (char*)buffer);
 
             	// send back successor
                 strcpy(buffer,std::to_string(n).c_str());
                 strcat(buffer," ");
                 strcat(buffer,id_and_ip.c_str());
-                log(LOG_LEVEL_INFO, "Sending to %s: %s\n", connected_IP.c_str(), buffer);
+                log(LOG_LEVEL_INFO, "Sending to %s: %s", connected_IP.c_str(), buffer);
                 write(sockfd, buffer, strlen(buffer));
             }
 
@@ -122,7 +122,7 @@ void set_next_ip(std::string ip){
 std::string include_node_call(char *hostnameOrIp, char *command){
 	std::string to_return = "";
     char buffer[FILE_SIZE];
-    log(LOG_LEVEL_INFO, "Connecting to server %s on port %d...\n", hostnameOrIp, PORT_NUMBER);
+    log(LOG_LEVEL_INFO, "Connecting to server %s on port %d...", hostnameOrIp, PORT_NUMBER);
 
     int sockfd = connectSocket(hostnameOrIp, PORT_NUMBER);
     if (sockfd == -1) {
